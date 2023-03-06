@@ -1,0 +1,34 @@
+Amount of not even numbers: 13
+Min value: 1, max value: 99
+There is prime number: 3
+Sum: 265
+Top-3 the biggest elements of the third sequance is 9801, 6561, 5929
+Diapazone of ordered insertion of 1: [1, 17)
+
+
+1 4 9 16 25 36 49 64 81 100 144 225 484 1225 2209 3025 3721 5929 6561 9801 
+
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 17 20 24 
+
+9801 6561 5929 3721 3025 2209 1225 484 225 144 100 81 64 49 36 25 16 9 4 
+
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 4 9 16 17 20 24 25 36 49 64 81 100 144 225 484 1225 2209 3025 3721 5929 6561 9801 
+
+Press any key to continue . . . 
+Amount of not even numbers: 12
+Min value: 1, max value: 99
+The first prime number in the first sequance is 3
+Sum: 326
+Top-3 the biggest elements of the third sequance is 9801, 6561, 5929
+Diapazone of ordered insertion of 1: [0, 15)
+
+
+1 4 9 16 25 36 49 64 81 100 144 225 484 961 2209 3025 4356 5929 6561 9801 
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 4 15 17 24 
+
+9801 6561 5929 4356 3025 2209 961 484 225 144 100 81 64 49 36 25 16 9 4 
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 4 9 15 16 17 24 25 36 49 64 81 100 144 225 484 961 2209 3025 4356 5929 6561 9801 
+
+Press any key to continue . . . 
