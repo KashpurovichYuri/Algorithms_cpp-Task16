@@ -81,7 +81,7 @@ int main()
 	// 13
 	std::for_each(std::begin(vector3), std::end(vector3), [](int& i){ if (i < 0) i = 0; });
 
-	// 14?
+	// 14? because of the next line, the program does not output everything that is expected
 	vector3.erase( ( std::remove(std::begin(vector3), std::end(vector3), 0 ), std::end(vector3)));
 
 	// 15
@@ -108,6 +108,16 @@ int main()
 	auto maximal_index = minimal_index + size_of_diapazone;
 	std::cout << "Diapazone of ordered insertion of 1: ["
 		<< minimal_index << ", " << maximal_index << ")" << std::endl;
+
+	// or using equal range:
+	auto pair = std::equal_range(std::begin(vector4), std::end(vector4), 1);
+	auto begin_index = pair.first;
+	auto end_index = pair.second;
+	auto left = std::distance(std::begin(vector4), begin_index);
+	auto size = std::distance(begin_index, end_index);
+	auto right = minimal_index + size;
+	std::cout << "Diapazone of ordered insertion of 1: ["
+		<< left << ", " << right << ")" << std::endl;
 
 	// 20
 	std::cout << std::endl << std::endl;
