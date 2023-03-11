@@ -23,23 +23,26 @@ int main()
 	std::shuffle(std::begin(vector1), std::end(vector1), engine1);
 
 	// 4
-	std::sort( vector1.begin(), vector1.end() );
-	vector1.erase( std::unique( vector1.begin(), vector1.end() ), vector1.end() );
+	std::sort( std::begin(vector1), std::end(vector1) );
+	vector1.erase( std::unique( std::begin(vector1), std::end(vector1) ), std::end(vector1) );
 
 	// 5
-	auto count_not_even = std::count_if(std::begin(vector1), std::end(vector1), [](int i){ return i % 2 != 0; });
+	auto count_not_even = std::count_if(std::begin(vector1), std::end(vector1), [](auto& i){ return i % 2 != 0; });
 	std::cout << "Amount of not even numbers: " << count_not_even << std::endl;
 
 	// 6
 	const auto minimum = std::min_element(std::begin(vector1), std::end(vector1));
 	const auto maximum = std::max_element(std::begin(vector1), std::end(vector1));
 	std::cout << "Min value: " << *minimum << ", max value: " << *maximum << std::endl;
+	// alternativly:
+	const auto [minimum_alt, maximum_alt] = std::minmax_element(std::begin(vector1), std::end(vector1));
+	std::cout << "Alternative way. Min value: " << *minimum << ", max value: " << *maximum << std::endl << std::endl;
 
 	// 7
 	auto it = std::find_if(
 		std::begin(vector1), 
 		std::end(vector1), 
-		[](int i)
+		[](auto& i)
 		{
 			if ((i == 1) || (i % 2 == 0))
 				return 0;
@@ -48,38 +51,42 @@ int main()
 					return 0;
 			return 1;
 		});
-		
-	std::cout << "The first prime number in the first sequance is " << *it << std::endl;
+	
+	if (it != std::end(vector1))
+		std::cout << "The first prime number in the first sequence is " << *it << std::endl;
+	else
+		std::cout << "There is no prime number in the first sequence is " << std::endl;
 
 	// 8
-	std::for_each(std::begin(vector1), std::end(vector1), [](int& i){ i *= i; });
+	std::for_each(std::begin(vector1), std::end(vector1), [](auto& i){ i *= i; });
 
 	// 9
+	std::random_device seed;
+	std::mt19937 engine(seed());
+	std::uniform_int_distribution< int > distribution(0, 30);
 	std::vector < int > vector2(vector1.size());
 	std::for_each(
 		std::begin(vector2), 
 		std::end(vector2), 
-		[](int& i)
-		{
-			std::random_device seed;
-			std::mt19937 engine(seed());
-			std::uniform_int_distribution< int > distribution(0, 30);
+		[ &engine, &distribution ](auto& i)
+		{			
 			i = distribution(engine);
 		});
 
 	// 10
-	auto sum_of_elem_of_vector2 = std::accumulate(std::begin(vector2), std::end(vector2), 0);
+	auto sum_of_elem_of_vector2 = std::accumulate(std::cbegin(vector2), std::cend(vector2), 0);
 	std::cout << "Sum: " << sum_of_elem_of_vector2 << std::endl;
 
 	// 11
-	std::fill_n(std::begin(vector2), (vector2.size() - 5 > 0) ? vector2.size() - 5 : 1, 1);
+	std::fill_n(std::begin(vector2), 3, 1);
 
 	// 12
 	std::vector < int > vector3;
-	std::set_difference(vector1.begin(), vector1.end(), vector2.begin(), vector2.end(), std::back_inserter(vector3));
+	std::transform(std::cbegin(vector1), std::cend(vector1), std::cbegin(vector2),
+				   std::back_inserter(vector3), std::minus<> {});
 
 	// 13
-	std::for_each(std::begin(vector3), std::end(vector3), [](int& i){ if (i < 0) i = 0; });
+	std::replace_if(std::begin(vector3), std::end(vector3), [](auto& i){ if (i < 0) return 1; else return 0; }, 0);
 
 	// 14? because of the next line, the program does not output everything that is expected
 	vector3.erase( ( std::remove(std::begin(vector3), std::end(vector3), 0 ), std::end(vector3)));
@@ -89,7 +96,6 @@ int main()
 
 	// 16
 	std::nth_element(std::begin(vector3), std::next(std::begin(vector3), 2), std::end(vector3), std::greater {});
-	std::nth_element(std::begin(vector3), std::next(std::begin(vector3), 1), std::end(vector3), std::greater {});
 	std::cout << "Top-3 the biggest elements of the third sequance is " 
 		<< vector3.at(0) << ", " << vector3.at(1) << ", " << vector3.at(2) << std::endl;
 
@@ -99,35 +105,24 @@ int main()
 
 	// 18
 	std::vector < int > vector4;
-	std::set_union(vector1.begin(), vector1.end(), vector2.begin(), vector2.end(), std::back_inserter(vector4));
+	std::merge(std::cbegin(vector1), std::cend(vector1), std::cbegin(vector2), std::cend(vector2), std::back_inserter(vector4));
 
 	// 19
-	auto diapazone = std::find(std::begin(vector4), std::end(vector4), 1);
-	auto size_of_diapazone = std::count(std::begin(vector4), std::end(vector4), 1);
-	auto minimal_index = std::distance(std::begin(vector4), diapazone);
-	auto maximal_index = minimal_index + size_of_diapazone;
-	std::cout << "Diapazone of ordered insertion of 1: ["
-		<< minimal_index << ", " << maximal_index << ")" << std::endl;
-
-	// or using equal range:
-	auto pair = std::equal_range(std::begin(vector4), std::end(vector4), 1);
-	auto begin_index = pair.first;
-	auto end_index = pair.second;
-	auto left = std::distance(std::begin(vector4), begin_index);
-	auto size = std::distance(begin_index, end_index);
-	auto right = minimal_index + size;
+	const auto [begin_index, end_index] = std::equal_range(std::cbegin(vector4), std::cend(vector4), 1);
+	auto left = std::distance(std::cbegin(vector4), begin_index);
+	auto right = left + std::distance(begin_index, end_index);
 	std::cout << "Diapazone of ordered insertion of 1: ["
 		<< left << ", " << right << ")" << std::endl;
 
 	// 20
 	std::cout << std::endl << std::endl;
-	std::copy(vector1.cbegin(), vector1.cend(), std::ostream_iterator < int > (std::cout, " "));
+	std::copy(std::cbegin(vector1), std::cend(vector1), std::ostream_iterator < int > (std::cout, " "));
 	std::cout << std::endl << std::endl;
-	std::copy(vector2.cbegin(), vector2.cend(), std::ostream_iterator < int > (std::cout, " "));
+	std::copy(std::cbegin(vector2), std::cend(vector2), std::ostream_iterator < int > (std::cout, " "));
 	std::cout << std::endl << std::endl;
-	std::copy(vector3.cbegin(), vector3.cend(),	std::ostream_iterator < int > (std::cout, " "));
+	std::copy(std::cbegin(vector3), std::cend(vector3),	std::ostream_iterator < int > (std::cout, " "));
 	std::cout << std::endl << std::endl;
-	std::copy(vector4.cbegin(), vector4.cend(),	std::ostream_iterator < int > (std::cout, " "));
+	std::copy(std::cbegin(vector4), std::cend(vector4),	std::ostream_iterator < int > (std::cout, " "));
 	std::cout << std::endl << std::endl;
 
 	system("pause");
